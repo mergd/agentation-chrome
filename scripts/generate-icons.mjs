@@ -6,7 +6,7 @@ const root = resolve(import.meta.dirname, "..");
 const svgPath = resolve(root, "public/icon.svg");
 const outDir = resolve(root, "public/icons");
 
-const sizes = [16, 32, 48, 128];
+const sizes = [16, 24, 32, 48, 128];
 
 await mkdir(outDir, { recursive: true });
 const svg = await readFile(svgPath);

@@ -326,7 +326,7 @@ function ensureLauncher(): void {
 
   const button = document.createElement("button");
   button.type = "button";
-  button.title = "Open Agentation";
+  button.title = "Open Chromentation";
   button.textContent = "Annotate";
   button.addEventListener("click", () => {
     void mountAgentation();

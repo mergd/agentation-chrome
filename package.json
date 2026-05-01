@@ -1,9 +1,10 @@
 {
-  "name": "agentation-chrome",
+  "name": "chromentation",
   "version": "1.0.0",
   "description": "Chrome extension host for Agentation.",
   "scripts": {
     "build": "tsc --noEmit && bun scripts/generate-icons.mjs && bun scripts/build.mjs",
+    "pack": "bun run build && cd dist && zip -rq ../agentation-chrome.zip . -x '*.DS_Store'",
     "icons": "bun scripts/generate-icons.mjs",
     "typecheck": "tsc --noEmit"
   },

@@ -48,7 +48,7 @@ await build({
     lib: {
       entry: resolve(root, "src/content/index.tsx"),
       formats: ["iife"],
-      name: "AgentationContent",
+      name: "ChromentationContent",
       fileName: () => "content.js"
     },
     outDir,
@@ -71,7 +71,7 @@ await build({
     lib: {
       entry: resolve(root, "src/background/index.ts"),
       formats: ["iife"],
-      name: "AgentationBackground",
+      name: "ChromentationBackground",
       fileName: () => "background.js"
     },
     outDir,

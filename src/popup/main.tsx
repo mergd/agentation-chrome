@@ -19,7 +19,7 @@ async function sendRuntimeMessage(message: RuntimeMessage): Promise<RuntimeRespo
     return (await chrome.runtime.sendMessage(message)) as RuntimeResponse;
   } catch (error) {
     return {
-      error: error instanceof Error ? error.message : "Unable to contact Agentation.",
+      error: error instanceof Error ? error.message : "Unable to contact Chromentation.",
       ok: false
     };
   }
@@ -62,7 +62,7 @@ function App() {
   const [isRemembered, setIsRemembered] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
   const [status, setStatus] = useState<Status>({
-    text: "Click once to run Agentation on this tab.",
+    text: "Click once to run Chromentation on this tab.",
     tone: "neutral"
   });
 
@@ -88,15 +88,15 @@ function App() {
 
   const openAgentation = useCallback(async () => {
     setIsBusy(true);
-    setStatus({ text: "Opening Agentation on this tab...", tone: "neutral" });
+    setStatus({ text: "Opening Chromentation on this tab...", tone: "neutral" });
 
     const response = await sendRuntimeMessage({ type: "agentation:open-current-tab" });
 
     if (isOk(response)) {
-      setStatus({ text: "Agentation is running on this page.", tone: "success" });
+      setStatus({ text: "Chromentation is running on this page.", tone: "success" });
     } else {
       setStatus({
-        text: response?.error ?? "Unable to open Agentation on this page.",
+        text: response?.error ?? "Unable to open Chromentation on this page.",
         tone: "error"
       });
     }
@@ -129,7 +129,7 @@ function App() {
 
   const rememberSite = useCallback(async () => {
     if (!target) {
-      setStatus({ text: "Agentation can only be remembered on http and https pages.", tone: "error" });
+      setStatus({ text: "Chromentation can only be remembered on http and https pages.", tone: "error" });
       return;
     }
 
@@ -160,7 +160,7 @@ function App() {
 
     if (isOk(response)) {
       setIsRemembered(true);
-      setStatus({ text: "Agentation launcher will appear on this site.", tone: "success" });
+      setStatus({ text: "Chromentation launcher will appear on this site.", tone: "success" });
     } else {
       setStatus({
         text: response?.error ?? "Site access was granted, but the launcher could not be registered.",
@@ -190,7 +190,7 @@ function App() {
     setIsRemembered(false);
     setIsBusy(false);
     setStatus({
-      text: isOk(response) ? "Agentation will no longer auto-show on this site." : "Removed browser permission.",
+      text: isOk(response) ? "Chromentation will no longer auto-show on this site." : "Removed browser permission.",
       tone: isOk(response) ? "success" : "neutral"
     });
   }, [target]);
@@ -233,7 +233,7 @@ function App() {
   return (
     <main className={styles.shell}>
       <section className={styles.hero}>
-        <h1>Agentation</h1>
+        <h1>Chromentation</h1>
         <p className={styles.eyebrow}>Visual feedback</p>
       </section>
 
@@ -249,7 +249,7 @@ function App() {
 
       <div className={styles.actions}>
         <button className={styles.primaryButton} disabled={isBusy || !target} type="button" onClick={openAgentation}>
-          Open Agentation
+          Open Chromentation
         </button>
         {isRemembered ? (
           <button className={styles.secondaryButton} disabled={isBusy || !target} type="button" onClick={forgetSite}>

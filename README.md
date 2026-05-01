@@ -1,4 +1,4 @@
-# Agentation Chrome
+# Chromentation
 
 Chrome extension host for the existing [`agentation`](https://www.agentation.com/) package.
 
