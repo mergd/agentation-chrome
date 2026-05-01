@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Chrome extension host for Agentation.",
   "scripts": {
-    "build": "tsc --noEmit && bun scripts/build.mjs",
+    "build": "tsc --noEmit && bun scripts/generate-icons.mjs && bun scripts/build.mjs",
+    "icons": "bun scripts/generate-icons.mjs",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
@@ -21,6 +22,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
+    "sharp": "^0.34.5",
     "typescript": "^6.0.3",
     "vite": "^8.0.10"
   }

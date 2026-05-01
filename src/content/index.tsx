@@ -19,7 +19,49 @@ let launcherRoot: HTMLElement | null = null;
 let isAgentationMounted = false;
 const contentGlobal = globalThis as typeof globalThis & {
   __agentationContentBooted?: boolean;
+  __agentationRuntimeListenerRegistered?: boolean;
 };
+
+const isolationStyleId = "agentation-page-isolation";
+const portalSelectors = [
+  '[class*="styles-module__popup___"]',
+  '[class*="page-toolbar-css"]',
+  '[class*="annotation-marker"]',
+  '[class*="annotation-popup"]',
+  '[class*="settings-panel"]',
+  '[class*="help-tooltip"]',
+  '[class*="design-mode"]'
+];
+
+function installIsolationStyles(): void {
+  if (document.getElementById(isolationStyleId)) {
+    return;
+  }
+
+  const wrapped = portalSelectors.flatMap((sel) => [sel, `${sel} *`]).join(",\n    ");
+
+  const style = document.createElement("style");
+  style.id = isolationStyleId;
+  style.textContent = `
+    ${wrapped} {
+      all: revert;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+  `;
+
+  const head = document.head ?? document.documentElement;
+  head.insertBefore(style, head.firstChild);
+}
+
+const domReady = new Promise<void>((resolve) => {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => resolve(), { once: true });
+    return;
+  }
+
+  resolve();
+});
 
 function getPageContext(): PageContext {
   return {
@@ -179,6 +221,8 @@ function hideLauncher(): void {
 }
 
 async function mountAgentation(): Promise<void> {
+  await domReady;
+
   if (isAgentationMounted) {
     hideLauncher();
     return;
@@ -232,6 +276,10 @@ async function mountAgentation(): Promise<void> {
 }
 
 function ensureLauncher(): void {
+  if (!document.body) {
+    return;
+  }
+
   if (launcherRoot || !assessPageEligibility().eligible) {
     return;
   }
@@ -247,42 +295,28 @@ function ensureLauncher(): void {
       all: initial;
       color-scheme: light dark;
       position: fixed;
-      right: 18px;
-      bottom: 18px;
+      right: 12px;
+      bottom: 12px;
       z-index: 2147483646;
     }
 
     button {
       align-items: center;
       appearance: none;
-      background: linear-gradient(135deg, #18181b, #3f3f46);
-      border: 1px solid color-mix(in srgb, white 16%, transparent);
-      border-radius: 999px;
-      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.3);
-      color: white;
+      background: #18181b;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      color: #ededee;
       cursor: pointer;
       display: inline-flex;
-      font: 600 13px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      gap: 8px;
-      letter-spacing: -0.01em;
-      padding: 11px 14px 11px 12px;
+      font: 500 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 6px 10px;
+      transition: background 120ms ease;
     }
 
     button:hover {
-      background: linear-gradient(135deg, #27272a, #52525b);
-      transform: translateY(-1px);
-    }
-
-    span {
-      align-items: center;
-      background: #f8fafc;
-      border-radius: 999px;
-      color: #18181b;
-      display: inline-flex;
-      font-size: 12px;
-      height: 22px;
-      justify-content: center;
-      width: 22px;
+      background: #27272a;
     }
 
     :host([data-agentation-hidden="true"]) {
@@ -293,7 +327,7 @@ function ensureLauncher(): void {
   const button = document.createElement("button");
   button.type = "button";
   button.title = "Open Agentation";
-  button.innerHTML = "<span>A</span> Annotate";
+  button.textContent = "Annotate";
   button.addEventListener("click", () => {
     void mountAgentation();
   });
@@ -355,8 +389,8 @@ function registerRuntimeMessages(): void {
 }
 
 function boot(): void {
+  installIsolationStyles();
   const eligibility = assessPageEligibility();
-  registerRuntimeMessages();
   registerSiteBridge();
   announceReady();
   ensureLauncher();
@@ -370,6 +404,11 @@ function boot(): void {
 
 if (!contentGlobal.__agentationContentBooted) {
   contentGlobal.__agentationContentBooted = true;
+
+  if (!contentGlobal.__agentationRuntimeListenerRegistered) {
+    contentGlobal.__agentationRuntimeListenerRegistered = true;
+    registerRuntimeMessages();
+  }
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", boot, { once: true });

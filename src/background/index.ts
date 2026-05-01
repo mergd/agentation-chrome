@@ -13,6 +13,14 @@ import type { AgentationEvent, RuntimeMessage, RuntimeResponse } from "../shared
 
 const maxEventLogEntries = 100;
 const contentScriptPrefix = "agentation_";
+const openMessageRetryCount = 5;
+const openMessageRetryDelayMs = 100;
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
 async function getState(): Promise<ExtensionState> {
   const stored = await chrome.storage.local.get(extensionStateKey);
@@ -51,9 +59,21 @@ async function injectAndOpen(tabId: number): Promise<void> {
     target: { tabId }
   });
 
-  await chrome.tabs.sendMessage(tabId, {
-    type: "agentation:open"
-  } satisfies RuntimeMessage);
+  let lastError: unknown = null;
+
+  for (let attempt = 0; attempt < openMessageRetryCount; attempt += 1) {
+    try {
+      await chrome.tabs.sendMessage(tabId, {
+        type: "agentation:open"
+      } satisfies RuntimeMessage);
+      return;
+    } catch (error) {
+      lastError = error;
+      await delay(openMessageRetryDelayMs);
+    }
+  }
+
+  throw lastError instanceof Error ? lastError : new Error("Unable to reach the Agentation content script.");
 }
 
 async function openCurrentTab(): Promise<void> {

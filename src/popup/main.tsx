@@ -114,9 +114,15 @@ function App() {
       target: { tabId: tab.id }
     });
 
-    const response = (await chrome.tabs.sendMessage(tab.id, {
-      type: "agentation:get-eligibility"
-    } satisfies RuntimeMessage)) as RuntimeResponse;
+    let response: RuntimeResponse;
+
+    try {
+      response = (await chrome.tabs.sendMessage(tab.id, {
+        type: "agentation:get-eligibility"
+      } satisfies RuntimeMessage)) as RuntimeResponse;
+    } catch {
+      return null;
+    }
 
     return isOk(response) ? response.eligibility ?? null : null;
   }, [tab?.id]);
@@ -227,11 +233,8 @@ function App() {
   return (
     <main className={styles.shell}>
       <section className={styles.hero}>
-        <div>
-          <p className={styles.eyebrow}>Agentation</p>
-          <h1>Visual feedback for this tab</h1>
-        </div>
-        <div className={styles.mark}>A</div>
+        <h1>Agentation</h1>
+        <p className={styles.eyebrow}>Visual feedback</p>
       </section>
 
       <section className={styles.card}>
