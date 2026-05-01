@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Agentation",
+  "version": "0.1.0",
+  "description": "Run Agentation on the current page with explicit, remembered site access.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Agentation"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["activeTab", "scripting", "storage"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"]
+}

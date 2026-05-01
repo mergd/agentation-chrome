@@ -1,0 +1,27 @@
+{
+  "name": "agentation-chrome",
+  "version": "1.0.0",
+  "description": "Chrome extension host for Agentation.",
+  "scripts": {
+    "build": "tsc --noEmit && bun scripts/build.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "packageManager": "bun@1.3.10",
+  "dependencies": {
+    "agentation": "^3.0.2",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.1.40",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10"
+  }
+}
